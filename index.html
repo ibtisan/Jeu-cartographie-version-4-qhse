@@ -1,0 +1,595 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+<title>Cartographie Bmcaf - Jeu</title>
+<style>
+  /* Quand la carte est cliquée, cacher la bulle */
+.carte:active .tooltip {
+  visibility: hidden;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  font-family: "Poppins", sans-serif;
+  background-color: #000;
+  }
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 950px;
+}
+
+.fond {
+  position: relative;
+  background-color: grey;
+  width: 900px;
+  height: 450px;
+  background-image: url(' https://i.postimg.cc/HkJqsvF2/image-cartographie-jeu-4.png'); 
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+}
+.zone-cartes {
+  position: absolute;
+  left: 50px;
+  top: 11.8%;
+  display: grid;
+  grid-template-rows: repeat(12, 31px);
+  grid-auto-flow: column;
+  gap: 5px;
+  width: 148px;
+  overflow: visible;
+  /*background-color: red;*/
+}
+.carte {
+  width: 31px;
+  height: 28px;
+  background-color: #fff9c4;
+  color: #222;
+  border-radius: 5px;
+  border: 2px solid #888;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.9em;
+  cursor: grab;
+  user-select: none;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  position: relative;
+}
+.carte:hover {
+  transform: scale(1.3);
+  z-index: 999; 
+}
+.carte .tooltip {
+  visibility: hidden;
+  width: 250px;
+  background-color: #000; /* fond noir */
+  color: #fff;
+  text-align: left;
+  border-radius: 5px;
+  padding: 6px 8px;
+  position: absolute;
+  z-index: 9999;
+  left: 105%; /* toujours à droite de la carte */
+  top: 20px; /* descend un peu pour ne pas être coupé en haut */
+  font-size: 14px;
+  line-height: 1.3em;
+  white-space: normal;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+  transition: opacity 0.2s ease-in-out;
+  opacity: 0;
+}
+
+/* Apparition au survol */
+.carte:hover .tooltip {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Disparition au clic */
+.carte:active .tooltip {
+  visibility: hidden;
+  opacity: 0;
+}
+
+.zone {
+  position: absolute;
+  width: 31px;
+  height: 27.8px;
+  border: 2px dashed transparent;
+  transition: border-color 0.3s ease;
+  background-color: /*transparent; } */rgba(255,0,0,0.2);
+}
+/* ------------------- Positions des 46 zones ------------------- */
+/* ------------------- Zones Indicateurs ------------------- */
+/* Ordre : 19, 7, 11, 18, 20, 16, 9, 2, 24, 23, 10, 6, 4, 12, 21, 25, 3, 15, 22, 13, 5, 17, 8, 14, 1 */
+.zone45 { top: 64.1%;  left: 45.5%; } /* Port effective des EPI dans l’atelier de production  ( Taux )  */
+.zone51 { top: 74.7%; left: 48.6%; } /* taux de personnel formé sur la manipulation des extincteurs */
+.zone53 { top: 74.2%; left: 58.3%; } /* Nombre de maladie professionnelle durant l’année */
+.zone44 { top: 90%; left: 35.6%; } /* Taux de conformité check liste hygiène */
+.zone50 { top:90.3%; left: 39.9%; } /* Taux de conformité check liste sécurité */
+.zone49 { top: 90.3%;  left: 53.2%; } /* Taux de gravité */
+.zone46 { top: 90.3%; left: 61%; } /* Taux de fréquence */
+.zone48 { top: 90.3%; left: 57%; } /* Taux de personnel formé sur les situations d’urgence */
+.zone47 { top: 90.4%; left: 68.7%; } /* Cout des accidents de travail */
+.zone52 { top: 90.6%;  left: 72.7%; } /* Coût de stress (Absentéisme +Turnover lié au stress )  */
+
+
+  /* Quand la carte est cliquée, cacher la bulle */
+.carte:active .tooltip {
+  visibility: hidden;
+}
+/* Indicateurs : cartes 1 à 25 — bleu foncé */
+/*#carte1, #carte2, #carte3, #carte4, #carte5, #carte6, #carte7, #carte8, #carte9,
+#carte10, #carte11, #carte12, #carte13, #carte14, #carte15, #carte16, #carte17,
+#carte18, #carte19, #carte20, #carte21, #carte22, #carte23, #carte24, #carte25, #carte26, #carte27, #carte28, #carte29, #carte30, #carte31, #carte32, #carte33,
+#carte34, #carte35, #carte36, #carte37, #carte38, #carte39, #carte40, #carte41,
+#carte42, #carte43,*/ #carte44, #carte45, #carte46, #carte47, #carte48, #carte49, #carte50, #carte51, #carte52, #carte53  {
+  background-color: #CC0000; /* rouge */
+  color: white;
+}
+
+  
+/* Styles généraux */
+body {  
+  /* tes styles desktop ici */
+}
+
+/* Autres classes et styles du jeu */
+.container { }
+.zone { }
+.card { }
+/* etc. */
+
+  
+  /* --- Mode mobile uniquement (DOIT ÊTRE EN BAS) --- */ /*@media screen and (max-width: 900px) { 
+  body { 
+    transform: scale(0.45); 
+    transform-origin: top left; 
+    width: 220%; 
+    height: auto; 
+    overflow: hidden;
+  }
+} */
+  
+ 
+  
+/* Mobile réel uniquement (téléphones/tablettes, pas PC réduit) */
+@media (max-width: 900px) and (pointer: coarse) {
+  body {
+    transform: scale(0.39);
+    transform-origin: top left;
+    width: 220%;
+    height: auto;
+    overflow: hidden;
+  }
+/*
+  /* Neutraliser le scaling pour le popup instructions */
+/*  #popup-mobile {
+    transform: none !important;   /* ignore le scale du body */
+  /*  position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    z-index: 9999 !important;
+  }*/
+
+/*  #popup-mobile > div {
+    transform: none !important;
+    width: 85% !important;
+    max-width: 400px !important;
+  }
+}
+*/
+
+
+  
+</style>
+</head>
+<body>
+
+<div class="fond">
+
+  <!-- Score -->
+  <div id="score" style="position:absolute; top:10px; right:70px; color:white; font-size:20px;">Score: 0</div>
+<div id="total score" style="position:absolute; top:10px; right:20px; color:white; font-size:20px;"> /10</div>
+
+  <button id="btn-instructions" onclick="ouvrirInstructions()"
+        style="position:absolute; top:60px; right:10px; padding:5px 10px; 
+               font-size:14px; border:none; border-radius:5px; 
+               background-color:#2196F3; color:white; cursor:pointer;">
+  📘 Instructions
+</button>
+
+ <!-- Nom du joueur -->
+<div id="nom-joueur" style="position:absolute; top:5px; left:1px; color:white; font-size:16px;">
+  <!--Nom du joueur :-->
+  <input type="text" id="playerName" placeholder="Entrez votre nom" 
+         style="padding:3px; border-radius:5px; border:none; font-size:14px;">
+</div>
+
+ <div class="zone-cartes">
+ <!-- ===== Cartes Entrée / Sortie (21 cartes) ===== -->
+<!-- ===== Cartes Indicateurs (1 → 25) ===== -->
+
+<!--<div class="carte" draggable="true" id="carte1">IN1 <span class="tooltip">La rentabilité financière</span></div>
+<div class="carte" draggable="true" id="carte2">IN2 <span class="tooltip">Taux de concrétisation commerciale</span></div>
+<div class="carte" draggable="true" id="carte3">IN3 <span class="tooltip">Retard d’expédition</span></div>
+<div class="carte" draggable="true" id="carte4">IN4 <span class="tooltip">Productivité des équipements de production</span></div>
+<div class="carte" draggable="true" id="carte5">IN5 <span class="tooltip">Taux d’efficacité du SMQ</span></div>
+<div class="carte" draggable="true" id="carte6">IN6 <span class="tooltip">Efficacité de la panification</span></div>
+<div class="carte" draggable="true" id="carte7">IN7 <span class="tooltip">Taux d’aboutissement des objectifs</span></div>
+<div class="carte" draggable="true" id="carte8">IN8 <span class="tooltip">Efficacité de la formation</span></div>
+<div class="carte" draggable="true" id="carte9">IN9 <span class="tooltip">Cout de projet de développement</span></div>
+<div class="carte" draggable="true" id="carte10">IN10 <span class="tooltip">Rupture de stock</span></div>
+<div class="carte" draggable="true" id="carte11">IN11 <span class="tooltip">Accroissement des ventes durant la compagne publicitaire</span></div>
+<div class="carte" draggable="true" id="carte12">IN12 <span class="tooltip">Coût du non qualité fabriquée</span></div>
+<div class="carte" draggable="true" id="carte13">IN13 <span class="tooltip">Taux des arrêts</span></div>
+<div class="carte" draggable="true" id="carte14">IN14 <span class="tooltip">Taux d’absentéisme</span></div>
+<div class="carte" draggable="true" id="carte15">IN15 <span class="tooltip">Taux d’exactitude des inventaires Produit fini</span></div>
+<div class="carte" draggable="true" id="carte16">IN16 <span class="tooltip">Délais de mise sur le marché du nouveau produit</span></div>
+<div class="carte" draggable="true" id="carte17">IN17 <span class="tooltip">Taux d’efficacité des actions correctives</span></div>
+<div class="carte" draggable="true" id="carte18">IN18 <span class="tooltip">Taux de notoriété de la marque</span></div>
+<div class="carte" draggable="true" id="carte19">IN19 <span class="tooltip">Croissance externe</span></div>
+<div class="carte" draggable="true" id="carte20">IN20 <span class="tooltip">Taux de rebond</span></div>
+<div class="carte" draggable="true" id="carte21">IN21 <span class="tooltip">Auto-évaluation 5S de l’atelier de conditionnement</span></div>
+<div class="carte" draggable="true" id="carte22">IN22 <span class="tooltip">Respect du planning d’entretien préventif</span></div>
+<div class="carte" draggable="true" id="carte23">IN23 <span class="tooltip">Délais d’achat</span></div>
+<div class="carte" draggable="true" id="carte24">IN24 <span class="tooltip">Taux de service clients</span></div>
+<div class="carte" draggable="true" id="carte25">IN25 <span class="tooltip">Perte de la matière première au poste de moulage</span></div>
+<div class="carte" draggable="true" id="carte26">IN26 <span class="tooltip">Quantité total de carburant consommé</span></div>
+<div class="carte" draggable="true" id="carte27">IN27 <span class="tooltip">concentration en polluant dans les eaux usées</span></div>
+<div class="carte" draggable="true" id="carte28">IN28 <span class="tooltip">Quantité de déchet dangereux colletée par l’atelier fabrication </span></div>
+<div class="carte" draggable="true" id="carte29">IN29 <span class="tooltip">Cout de la consommation énergétique annuel (Eau+ gaz+ électricité +Fuel) </span></div>
+<div class="carte" draggable="true" id="carte30">IN30 <span class="tooltip">concentration de polluants dans l’air liés aux émissions de la chaudière </span></div>
+<div class="carte" draggable="true" id="carte31">IN31 <span class="tooltip">rendement du carburant par véhicule motorisé</span></div>
+<div class="carte" draggable="true" id="carte32">IN32 <span class="tooltip">quantité d’eau utilisée par unité de production.</span></div>
+<div class="carte" draggable="true" id="carte33">IN33 <span class="tooltip">budget consacré à la recherche sur les techniques de réduction de consommation d’eau.</span></div>
+<div class="carte" draggable="true" id="carte34">IN34 <span class="tooltip">le pourcentage de véhicules du parc Appro & livraison dotés d’une technologie visant à diminuer la pollution. </span></div>
+<div class="carte" draggable="true" id="carte35">IN35 <span class="tooltip">Taux de conformité réglementaire  </span></div>
+<div class="carte" draggable="true" id="carte36">IN36 <span class="tooltip">concentration de polluants dans l’air liés aux émissions des véhicules motorisés (CO, HC et NOx)</span></div>
+<div class="carte" draggable="true" id="carte37">IN37 <span class="tooltip">le pourcentage de véhicules des fournisseurs dotés d’une technologie visant à diminuer la pollution.</span></div>
+<div class="carte" draggable="true" id="carte38">IN38 <span class="tooltip">le retour sur investissement des projets d’amélioration environnementale.</span></div>
+<div class="carte" draggable="true" id="carte39">IN39 <span class="tooltip">le nombre de voyages d’affaires (commerciales foires.. ) effectués pour chaque mode de transport.</span></div>
+<div class="carte" draggable="true" id="carte40">IN40 <span class="tooltip">le nombre de livraisons pour chaque mode de transport par unité de temps.</span></div>
+<div class="carte" draggable="true" id="carte41">IN41 <span class="tooltip"> le taux de croissance de la population au niveau local ou régional.</span></div>
+<div class="carte" draggable="true" id="carte42">IN42 <span class="tooltip">Empreinte carbone d’un nouveau produit. </span></div>
+<div class="carte" draggable="true" id="carte43">IN43 <span class="tooltip">Quantité de déchet dangereux générée par le développement des nouveaux produits.</span></div>-->
+<div class="carte" draggable="true" id="carte44">IN44 <span class="tooltip">Taux de conformité check liste hygiène</span></div>
+<div class="carte" draggable="true" id="carte45">IN45 <span class="tooltip">Port effective des EPI dans l’atelier de production  ( Taux )</span></div>
+<div class="carte" draggable="true" id="carte46">IN46 <span class="tooltip">Taux de fréquence</span></div>
+<div class="carte" draggable="true" id="carte47">IN47 <span class="tooltip">Cout des accidents de travail </span></div>
+<div class="carte" draggable="true" id="carte48">IN48 <span class="tooltip">Taux de personnel formé sur les situations d’urgence</span></div>
+<div class="carte" draggable="true" id="carte49">IN49 <span class="tooltip">Taux de gravité</span></div>
+   <div class="carte" draggable="true" id="carte50">IN50 <span class="tooltip">Taux de conformité check liste sécurité</span></div>
+<div class="carte" draggable="true" id="carte51">IN51 <span class="tooltip">personnel formé sur la manipulation des extincteurs</span></div>
+<div class="carte" draggable="true" id="carte52">IN52 <span class="tooltip">Coût de stress (Absentéisme +Turnover lié au stress )</span></div>
+<div class="carte" draggable="true" id="carte53">IN53 <span class="tooltip">Nombre de maladie professionnelle durant l’année  </span></div>
+
+
+</div>
+
+
+  <!-- Zones -->
+<!-- ========================== -->
+<!--   ZONES 1–46 : Correspondance exacte -->
+<!-- ========================== -->
+
+<!-- <div class="zone zone26" data-id="carte26"></div>
+<div class="zone zone27" data-id="carte27"></div>
+<div class="zone zone28" data-id="carte28"></div>
+<div class="zone zone29" data-id="carte29"></div>
+<div class="zone zone30" data-id="carte30"></div>
+<div class="zone zone31" data-id="carte31"></div>
+<div class="zone zone32" data-id="carte32"></div>
+<div class="zone zone33" data-id="carte33"></div>
+<div class="zone zone34" data-id="carte34"></div>
+<div class="zone zone35" data-id="carte35"></div>
+<div class="zone zone36" data-id="carte36"></div>
+<div class="zone zone37" data-id="carte37"></div>
+<div class="zone zone38" data-id="carte38"></div>
+<div class="zone zone39" data-id="carte39"></div>
+<div class="zone zone40" data-id="carte40"></div>
+<div class="zone zone41" data-id="carte41"></div>
+<div class="zone zone42" data-id="carte42"></div>
+<div class="zone zone43" data-id="carte43"></div>-->
+<div class="zone zone44" data-id="carte44"></div>
+<div class="zone zone45" data-id="carte45"></div>
+<div class="zone zone46" data-id="carte46"></div>
+<div class="zone zone47" data-id="carte47"></div>
+<div class="zone zone48" data-id="carte48"></div>
+<div class="zone zone49" data-id="carte49"></div>
+<div class="zone zone50" data-id="carte50"></div>
+<div class="zone zone51" data-id="carte51"></div>
+<div class="zone zone52" data-id="carte52"></div>
+<div class="zone zone53" data-id="carte53"></div>
+  
+</div>
+
+<script>
+
+const cartes = document.querySelectorAll('.carte');
+const zones = document.querySelectorAll('.zone');
+let draggedCarte = null;
+let score = 0;
+const scoreDisplay = document.getElementById('score');
+
+// 🔹 Création du message flottant
+const messageDiv = document.createElement("div");
+messageDiv.id = "message";
+messageDiv.style.position = "absolute";
+messageDiv.style.top = "10px";
+messageDiv.style.left = "50%";
+messageDiv.style.transform = "translateX(-50%)";
+messageDiv.style.padding = "10px 20px";
+messageDiv.style.borderRadius = "8px";
+messageDiv.style.fontWeight = "bold";
+messageDiv.style.fontSize = "18px";
+messageDiv.style.display = "none";
+messageDiv.style.zIndex = "1000";
+document.body.appendChild(messageDiv);
+
+// 🔹 Gestion du drag & drop
+cartes.forEach(carte => {
+  carte.addEventListener('dragstart', dragStart);
+  carte.addEventListener('click', () => {
+    const tooltip = carte.querySelector('.tooltip');
+    if (tooltip) tooltip.style.visibility = 'hidden';
+  });
+});
+
+zones.forEach(zone => {
+  zone.addEventListener('dragover', dragOver);
+  zone.addEventListener('drop', drop);
+});
+
+function dragStart(e) {
+  draggedCarte = this;
+}
+
+function dragOver(e) {
+  e.preventDefault();
+}
+
+function drop(e) {
+  e.preventDefault();
+  const zoneId = this.dataset.id;
+
+  if (draggedCarte.id === zoneId) {
+    this.appendChild(draggedCarte);
+    draggedCarte.style.position = "absolute";
+    draggedCarte.style.top = "0px";
+    draggedCarte.style.left = "0px";
+    draggedCarte.setAttribute("draggable", "false");
+
+    score++;
+    scoreDisplay.textContent = "Score: " + score;
+    showMessage("✅ Bonne carte placée !", true);
+
+    // Optionnel : message final quand tout est juste
+   if (score === cartes.length) {
+  const playerName = document.getElementById("playerName").value.trim() || "Joueur";
+  showMessage(`🎉 Bravo ${playerName} ! Vous avez tout placé correctement ! 🎉`, true, true);
+}
+
+  } else {
+    showMessage("❌ Mauvais emplacement !", false);
+  }
+}
+
+// 🔹 Fonction d’affichage du message temporaire
+let permanentMessageShown = false; // drapeau pour savoir si le message final est affiché
+
+function showMessage(texte, succes, permanent = false) {
+  if (permanentMessageShown) return; // ne plus toucher le message final
+
+  messageDiv.textContent = texte;
+  messageDiv.style.display = "block";
+  messageDiv.style.backgroundColor = succes ? "rgba(0,128,0,0.9)" : "rgba(200,0,0,0.9)";
+  messageDiv.style.color = "white";
+
+  if (permanent) {
+    permanentMessageShown = true; // on bloque tout changement après
+    messageDiv.style.fontSize = "24px";
+    messageDiv.style.top = "50%";
+    messageDiv.style.left = "50%";
+    messageDiv.style.transform = "translate(-50%, -50%)";
+    messageDiv.style.padding = "20px 40px";
+    messageDiv.style.border = "3px solid gold";
+    messageDiv.style.textAlign = "center";
+    messageDiv.style.zIndex = "2000";
+  } else {
+    setTimeout(() => {
+      if (!permanentMessageShown) messageDiv.style.display = "none";
+    }, 1500);
+  }
+}
+
+
+</script>
+
+<script>
+// ---- POPUP MOBILE INDEPENDANT DU BODY ----
+window.addEventListener("load", () => {
+  // Vérifie largeur et pointeur tactile
+  const isMobileDevice = window.matchMedia("(pointer: coarse)").matches;
+  if (window.innerWidth <= 900 && isMobileDevice) {  // Mobile réel uniquement
+
+    // Création du popup overlay
+    const popup = document.createElement("div");
+    popup.style.position = "fixed";
+    popup.style.top = "0";
+    popup.style.left = "0";
+    popup.style.width = "100%";
+    popup.style.height = "100%";
+    popup.style.background = "rgba(0,0,0,0.75)";
+    popup.style.display = "flex";
+    popup.style.alignItems = "center";
+    popup.style.justifyContent = "center";
+    popup.style.zIndex = "9999";
+    popup.style.transform = "none"; // Ignore le scaling du body
+
+    // Contenu du popup
+    const box = document.createElement("div");
+    box.style.background = "white";
+    box.style.padding = "25px 30px";
+    box.style.borderRadius = "12px";
+    box.style.textAlign = "center";
+    box.style.width = "85%";
+    box.style.maxWidth = "400px";
+    box.style.fontSize = "16px";
+    box.style.lineHeight = "1.5";
+    box.style.fontFamily = "Poppins, sans-serif";
+    box.style.boxShadow = "0 4px 15px rgba(0,0,0,0.25)";
+    box.style.transform = "none"; // aussi pour le contenu
+
+    box.innerHTML = `
+      ⚠️ <strong>Mode Mobile</strong><br><br>
+      Ce jeu est optimisé pour un ordinateur.<br>
+      Veuillez utiliser un PC pour jouer correctement.<br><br>
+      <button id="closePopup"
+        style="
+          padding:10px 20px;
+          border:none;
+          background:#333;
+          color:white;
+          border-radius:8px;
+          cursor:pointer;
+          font-size:16px;">
+        OK
+      </button>
+    `;
+
+    popup.appendChild(box);
+
+    // Ajouter au documentElement pour éviter le scaling
+    document.documentElement.appendChild(popup);
+
+    // Fermeture
+    document.getElementById("closePopup").onclick = () => {
+      popup.remove();
+    };
+  }
+});
+</script>
+
+
+<div id="popup-instructions" 
+     style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+            background:rgba(0,0,0,0.7); backdrop-filter:blur(3px);
+            justify-content:center; align-items:center; z-index:9999;">
+
+  <div style="background:white; padding:20px; width:85%; max-width:400px;
+              border-radius:10px; font-size:16px; color:#333;">
+
+    <p style="font-weight:bold; text-align:center; margin-bottom:15px;">
+      BMCAF – RMQHSE<br>
+     Exercice Pratique : Cartographie des processus
+SMSST de BP PLASTICS 
+
+    </p>
+    <h2 style="margin-top:0; text-align:center;">📘 Instructions du jeu</h2>
+
+    <p>
+     
+      🔹  Déplacez chaque carte vers la zone verte correspondante.<br><br>
+      🔹 Si la carte correspond au bon emplacement, elle se fixe et vous gagnez des points.<br><br>
+      🔹 Si ce n’est pas le bon emplacement, la carte revient à sa position initiale.<br><br>
+      🔹  Le score augmente à chaque bonne réponse jusqu’à 10/10.<br><br>
+
+      🔹 Le but est de placer correctement les <strong>10 indicateurs sécurité.</strong>
+    </p>
+
+    <div style="text-align:center; margin-top:20px;">
+      <button onclick="fermerInstructions()"
+              style="padding:8px 15px; font-size:14px; border:none; 
+                     border-radius:5px; background:#4CAF50; color:white; cursor:pointer;">
+        OK, j’ai compris !
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function ouvrirInstructions() {
+  document.getElementById("popup-instructions").style.display = "flex";
+}
+
+function fermerInstructions() {
+  document.getElementById("popup-instructions").style.display = "none";
+}
+  
+
+
+</script>
+  
+  <div id="resize-warning" style="
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    background: rgba(255,165,0,0.9);
+    color: #000;
+    padding: 6px 12px;
+    border-radius: 5px;
+    font-weight: bold;
+    font-family: Poppins, sans-serif;
+    display: none;
+    z-index: 9999;
+">
+  Agrandissez votre fenêtre pour voir tout le jeu !
+</div>
+
+
+
+<script>
+function checkWindowSize() {
+
+    const warning = document.getElementById("resize-warning");
+
+    // 🔥 Détection téléphone / tablette → on cache toujours le message
+    const isMobile = window.matchMedia("(pointer: coarse)").matches;
+    if (isMobile) {
+        warning.style.display = "none";
+        return;
+    }
+
+    // 🖥️ PC → afficher seulement si fenêtre trop petite
+    if (window.innerWidth < 950) {
+        warning.style.display = "block";
+    } else {
+        warning.style.display = "none";
+    }
+}
+
+// Vérifier au chargement + en cas de redimensionnement
+window.addEventListener("load", checkWindowSize);
+window.addEventListener("resize", checkWindowSize);
+</script>
+
+
+
+</body>
+</html>
+
+
+
+
+
+
+
