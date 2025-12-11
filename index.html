@@ -308,16 +308,16 @@ body {
 <div class="zone zone41" data-id="carte41"></div>
 <div class="zone zone42" data-id="carte42"></div>
 <div class="zone zone43" data-id="carte43"></div>-->
-<div class="zone zone44" data-id="carte44"></div>
-<div class="zone zone45" data-id="carte45"></div>
-<div class="zone zone46" data-id="carte46"></div>
-<div class="zone zone47" data-id="carte47"></div>
-<div class="zone zone48" data-id="carte48"></div>
-<div class="zone zone49" data-id="carte49"></div>
-<div class="zone zone50" data-id="carte50"></div>
-<div class="zone zone51" data-id="carte51"></div>
-<div class="zone zone52" data-id="carte52"></div>
-<div class="zone zone53" data-id="carte53"></div>
+<div class="zone zone44" data-accept="carte44,carte50"></div>
+<div class="zone zone45" data-accept="carte45"></div>
+<div class="zone zone46" data-accept="carte46,carte48,carte49"></div>
+<div class="zone zone47" data-accept="carte47,carte52"></div>
+<div class="zone zone48" data-accept="carte48,carte46,carte49"></div>
+<div class="zone zone49" data-accept="carte49,carte46,carte48"></div>
+<div class="zone zone50" data-accept="carte50,carte44"></div>
+<div class="zone zone51" data-accept="carte51,carte53"></div>
+<div class="zone zone52" data-accept="carte52,carte47"></div>
+<div class="zone zone53" data-accept="carte53,carte51"></div>
   
 </div>
 
@@ -370,7 +370,9 @@ function drop(e) {
   e.preventDefault();
   const zoneId = this.dataset.id;
 
-  if (draggedCarte.id === zoneId) {
+  const accepted = this.dataset.accept.split(",");
+if (accepted.includes(draggedCarte.id)) {
+
     this.appendChild(draggedCarte);
     draggedCarte.style.position = "absolute";
     draggedCarte.style.top = "0px";
@@ -514,7 +516,7 @@ SMSST de BP PLASTICS
 
       🔹 Le but est de placer correctement les <strong>10 indicateurs sécurité.</strong>
     </p>
-
+    
     <div style="text-align:center; margin-top:20px;">
       <button onclick="fermerInstructions()"
               style="padding:8px 15px; font-size:14px; border:none; 
@@ -586,10 +588,3 @@ window.addEventListener("resize", checkWindowSize);
 
 </body>
 </html>
-
-
-
-
-
-
-
